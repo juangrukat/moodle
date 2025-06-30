@@ -1,178 +1,193 @@
-
+```jsonc
 {
   //============================================================
-  // Moodle GIFT Style Guide (v1.0 – July 2025)
-  // Purpose: Give an LLM an explicit reference for generating
-  // Moodle‑compliant questions in GIFT format.
+  // Moodle GIFT Style Guide (v2.0 – July 2025)
+  // Purpose
+  // --------
+  // 1. Provide an LLM with rock‑solid rules & templates for
+  //    writing Moodle‑compliant GIFT questions.
+  // 2. Supply a **feature‑tag vocabulary** that lets the LLM
+  //    map what it sees in a source passage → the most
+  //    appropriate question TYPE to generate.
+  //
+  // In practice, the workflow is:
+  //   ◦ LLM analyses the passage and assigns one or more
+  //     *text_feature_tags* to what it finds.
+  //   ◦ For each feature, look up the question types whose
+  //     `feature_tags` overlap.
+  //   ◦ Pick the best‑fit templates and fill in PARAMETERS to
+  //     create the desired number of questions (e.g., 20).
   //============================================================
 
   "meta": {
-    "encoding": "UTF‑8",                // Always save files in UTF‑8
-    "blank_line_between_questions": true,
-    "title_required": true,              // Each question must have ::Title::
-    "teacher_comment_required": true,    // Every ~wrong answer needs #comment explaining why
-    "tags_per_question": 10,             // Exactly ten tags per question for quick LLM retrieval
-    "escape_rule": "Use a backslash (\\) before ~ = # { } : when they appear as normal text."
+    "encoding": "UTF‑8",                      // Always save files in UTF‑8
+    "blank_line_between_questions": true,     // One blank line after every }
+    "title_required": true,                   // Every question needs ::Title::
+    "teacher_comment_required": true,         // Every ~wrong answer must include #feedback
+    "escape_rule": "Prefix ~ = # { } : with a backslash (\\) when they appear as literals."
   },
 
-  //‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
-  // Unified Tag Taxonomy – assign **exactly 10** tags to every
-  // question, enabling the LLM to quickly determine if it suits a given ask or text.
-  //‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
-  "tags": [
-    "fact_recall", "definition", "terminology", "concept_check", "historical_date",
-    "classification", "process_step", "example_identification", "application",
-    "misconception_check", "calculation", "estimation", "relationship", "cause_effect",
-    "sequence", "comparison", "analysis", "synthesis", "evaluation", "creative"
+  //------------------------------------------------------------
+  // Text‑Feature Tag Taxonomy
+  // -------------------------
+  // Exactly 20 tags that describe salient structures or facts a
+  // passage might contain.  They are attached to *question
+  // types* (see below) — NOT to individual question instances.
+  //------------------------------------------------------------
+  "text_feature_tags": [
+    // literal / factual
+    "numeric_value",      // explicit numbers, units, quantitative data
+    "binary_statement",   // claims that are either true or false
+    "named_entity",       // proper names: people, places, titles, terms
+    "chronology",         // dates, timelines, ordered historical events
+    "list_items",         // bullet lists or comma‑separated enumerations
+    "paired_items",       // A→B correspondences (term : definition)
+    "stepwise_process",   // ordered procedure or algorithm
+    "classification",     // category / sub‑category relationships
+    "comparison",         // explicit similarities / differences
+    "cause_effect",       // stated causal relationships
+    // higher‑order / contextual
+    "concept_definition", // sentence that defines or explains a term
+    "example_sentence",   // sentence gives example of concept in action
+    "quote",              // quotations that can be completed or attributed
+    "formula_or_equation",// math/chem expressions present in text
+    "graph_or_table",     // visual data referenced by the prose
+    "conditional_statement",// if … then … constructions
+    "interpretation_required",// inference beyond literal text
+    "process_output",     // mapping of input → output/result
+    "ranking_order",      // best → worst, largest → smallest, etc.
+    "exception_rule"      // rule plus its exceptions stated
   ],
 
-  //‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+  //------------------------------------------------------------
   // Question Type Templates
-  // Each object below contains:
-  //   • description – plain‑language overview
-  //   • template    – skeletal GIFT snippet with placeholders
-  //   • parameters  – configurable elements expected from the LLM
-  //   • recommended_tags – 10 tag suggestions suited to this type
-  //‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+  // -----------------------
+  // Each template has:
+  //   • description   – plain‑language summary.
+  //   • feature_tags  – which text features signal this type is
+  //                     a strong candidate.
+  //   • template      – skeletal GIFT with ${placeholders}.
+  //   • parameters    – required inputs the LLM must provide.
+  //------------------------------------------------------------
   "question_types": {
 
     "multiple_choice_single": {
-      "description": "One correct answer, radio‑button style.",
+      "description": "Exactly one correct answer (radio‑button).",
+      "feature_tags": [
+        "named_entity", "numeric_value", "concept_definition",
+        "list_items", "example_sentence", "cause_effect"
+      ],
       "template": "::${title}:: ${question_text} {\n =${correct_answer} #${correct_feedback}\n ~${wrong_answer_1} #${feedback_1}\n ~${wrong_answer_2} #${feedback_2}\n ...\n}",
       "parameters": {
-        "title": "String – 3‑12 words summarising the ask.",
+        "title": "3‑12 word summary of the ask.",
         "question_text": "Prompt. May start with [html]|[markdown]|[plain]|[moodle].",
         "answers[]": {
-          "text": "String",
-          "is_correct": "Boolean (exactly one true)",
-          "weight": "Optional %n% (numeric)",
-          "feedback": "String – teacher explanation (required for wrong answers, optional for correct)."
+          "text": "Answer text",
+          "is_correct": "true | false (only one true)",
+          "weight": "Optional %n% for partial credit (rare)",
+          "feedback": "Teacher explanation (required for wrong answers)"
         },
-        "shuffle": "Boolean – if true, Moodle shuffles answers.",
-        "default_grade": "Number – points awarded for full credit."
-      },
-      "recommended_tags": [
-        "fact_recall", "definition", "terminology", "concept_check", "historical_date",
-        "classification", "process_step", "example_identification", "misconception_check", "basic_math"
-      ]
+        "shuffle": "true | false – let Moodle randomise order",
+        "default_grade": "Numeric points for full credit"
+      }
     },
 
     "multiple_choice_multiple": {
-      "description": "Checkbox question with two or more partially weighted correct answers.",
-      "template": "::${title}:: ${question_text} {\n ~%${neg_weight}%${distractor} #${feedback_d}\n ~%${pos_weight_1}%${correct_part_1} #${feedback_c1}\n ...\n}",
+      "description": "Checkboxes; several answers may be partially correct.",
+      "feature_tags": [
+        "list_items", "comparison", "classification",
+        "stepwise_process", "ranking_order", "exception_rule"
+      ],
+      "template": "::${title}:: ${question_text} {\n ~%${neg_weight}%${distractor} #${feedback_d}\n ~%${pos_weight}%${correct_part} #${feedback_c}\n ...\n}",
       "parameters": {
         "answers[]": {
-          "text": "String",
-          "weight": "Percent – positive for correct, negative for penalties.",
-          "feedback": "String – teacher explanation."
+          "text": "Answer text",
+          "weight": "Positive or negative % weight",
+          "feedback": "Teacher explanation"
         },
-        "total_positive_weight": "≤100 – avoid automatic full marks via select‑all.",
-        "min_negative_weight": "Use at least ‑50% for clear distractors."
-      },
-      "recommended_tags": [
-        "analysis", "comparison", "classification", "application", "concept_check",
-        "misconception_check", "relationship", "process_step", "sequence", "cause_effect"
-      ]
+        "total_positive_weight": "Sum of all positive weights ≤100",
+        "min_negative_weight": "Use at least ‑50% to deter select‑all"
+      }
     },
 
     "true_false": {
-      "description": "Binary TRUE/FALSE statement.",
+      "description": "Binary proposition (T/F).",
+      "feature_tags": [ "binary_statement", "cause_effect", "conditional_statement" ],
       "template": "::${title}:: ${statement} {${T_or_F}}\n#${feedback_wrong}\n#${feedback_right}",
       "parameters": {
-        "statement": "Proposition being evaluated.",
-        "correct_value": "T | F (or TRUE | FALSE)",
-        "feedback_wrong": "Comment displayed when learner is incorrect.",
-        "feedback_right": "Comment displayed when learner is correct (optional but recommended)."
-      },
-      "recommended_tags": [
-        "fact_recall", "concept_check", "misconception_check", "definition", "relationship",
-        "historical_date", "cause_effect", "basic_math", "terminology", "sequence"
-      ]
+        "statement": "Text of the claim.",
+        "correct_value": "T | F (TRUE | FALSE)",
+        "feedback_wrong": "Shown when learner is incorrect.",
+        "feedback_right": "Shown when learner is correct (optional but helpful)"
+      }
     },
 
     "short_answer": {
-      "description": "Learner types a short text answer; multiple spellings allowed.",
-      "template": "::${title}:: ${question_text} {=${answer1} #${fb1} =${answer2} #${fb2} ...}",
+      "description": "Learner types a short text answer; synonyms allowed.",
+      "feature_tags": [ "named_entity", "concept_definition", "quote" ],
+      "template": "::${title}:: ${question_text} {\n =${answer1} #${fb1}\n =${answer2} #${fb2}\n ...\n}",
       "parameters": {
         "answers[]": {
-          "text": "Accepted answer variant.",
-          "weight": "Optional %n% for partial credit.",
-          "feedback": "String – explanation when this variant is used."
+          "text": "Accepted variant",
+          "weight": "Optional %n% for partial credit",
+          "feedback": "Explanation for this variant"
         },
         "usecase": "0 (case‑insensitive) | 1 (case‑sensitive)"
-      },
-      "recommended_tags": [
-        "definition", "terminology", "fact_recall", "historical_date", "process_step",
-        "classification", "concept_check", "example_identification", "calculation", "sequence"
-      ]
+      }
     },
 
     "matching": {
-      "description": "Learner pairs prompts with matches.",
+      "description": "Learner pairs items from two columns.",
+      "feature_tags": [ "paired_items", "classification", "process_output" ],
       "template": "::${title}:: ${question_text} {\n =${left_1} -> ${right_1}\n =${left_2} -> ${right_2}\n =${left_3} -> ${right_3}\n}",
       "parameters": {
         "pairs[]": { "left": "String", "right": "String" },
         "min_pairs": 3
-      },
-      "recommended_tags": [
-        "classification", "terminology", "definition", "relationship", "sequence",
-        "cause_effect", "example_identification", "process_step", "comparison", "fact_recall"
-      ]
+      }
     },
 
     "missing_word": {
-      "description": "Fill‑in‑the‑blank embedded answers.",
+      "description": "Embedded answers inside a sentence (gap‑fill).",
+      "feature_tags": [ "quote", "concept_definition", "numeric_value", "named_entity" ],
       "template": "::${title}:: ${sentence_with_{~distractor =correct}...}",
       "parameters": {
-        "sentence": "Text containing inline answer set.",
-        "answers_per_gap": "≥2 (one =correct, ≥1 ~wrong)",
-        "feedback": "Inline #feedback for each option."
-      },
-      "recommended_tags": [
-        "terminology", "definition", "fact_recall", "historical_date", "process_step",
-        "sequence", "basic_math", "example_identification", "concept_check", "classification"
-      ]
+        "sentence": "Sentence containing inline answer set.",
+        "answers_per_gap": "≥2 choices: one =correct, ≥1 ~wrong",
+        "feedback": "Inline #feedback for each option"
+      }
     },
 
     "numerical": {
-      "description": "Numeric input with tolerance or ranges.",
+      "description": "Learner enters a number within tolerance or range.",
+      "feature_tags": [ "numeric_value", "formula_or_equation", "graph_or_table" ],
       "template": "::${title}:: ${question_text} {#${answer}:${tolerance}}",
       "parameters": {
-        "answer": "Number or min..max span.",
-        "tolerance": "Accepted ± range (e.g., 0.5).",
-        "partial_credit_ranges": "Use =%n%value:tolerance syntax for graded bands.",
-        "feedback_each_range": "#comment follows each range."
-      },
-      "recommended_tags": [
-        "calculation", "estimation", "basic_math", "fact_recall", "historical_date",
-        "process_step", "relationship", "concept_check", "example_identification", "misconception_check"
-      ]
+        "answer": "Central numeric value OR min..max span",
+        "tolerance": "Accepted ± range (e.g., 0.5)",
+        "partial_credit_ranges": "Optional =%n%value:tolerance bands",
+        "feedback_each_range": "#comment after each range"
+      }
     },
 
     "essay": {
-      "description": "Open response graded manually.",
+      "description": "Open response to be graded manually.",
+      "feature_tags": [ "interpretation_required", "cause_effect", "comparison", "analysis" ],
       "template": "::${title}:: ${prompt} {}",
       "parameters": {
-        "prompt": "Question or task.",
-        "grader_info": "Optional directions to human grader.",
-        "expected_word_count": "Optional range."
-      },
-      "recommended_tags": [
-        "analysis", "synthesis", "evaluation", "creative", "application",
-        "cause_effect", "relationship", "comparison", "historical_date", "concept_check"
-      ]
+        "prompt": "Question or writing task.",
+        "grader_info": "Directions for human grader (optional)",
+        "expected_word_count": "Suggested range (optional)"
+      }
     },
 
     "description": {
-      "description": "Non‑interactive text shown to learners.",
+      "description": "Non‑interactive informational text block.",
+      "feature_tags": [ "graph_or_table", "quote" ],
       "template": "::${title}:: ${content}",
       "parameters": {
-        "content": "Informational text (no answer block)."
-      },
-      "recommended_tags": [
-        "example_identification", "definition", "process_step", "sequence", "concept_check",
-        "relationship", "historical_date", "classification", "fact_recall", "cause_effect"
-      ]
+        "content": "Plaintext or formatted information (no answer block)"
+      }
     }
   }
 }
+```
