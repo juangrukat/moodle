@@ -23,7 +23,7 @@
     "encoding": "UTF‑8",                      // Always save files in UTF‑8
     "blank_line_between_questions": true,     // One blank line after every }
     "title_required": true,                   // Every question needs ::Title::
-    "teacher_comment_required": true,         // Every ~wrong answer must include #feedback
+    "teacher_comment_required": true,         // All wrong options (~) and the wrong‑answer branch of T/F must carry #feedback
     "escape_rule": "Prefix ~ = # { } : with a backslash (\\) when they appear as literals."
   },
 
@@ -113,12 +113,12 @@
     "true_false": {
       "description": "Binary proposition (T/F).",
       "feature_tags": [ "binary_statement", "cause_effect", "conditional_statement" ],
-      "template": "::${title}:: ${statement} {${T_or_F}}\n#${feedback_wrong}\n#${feedback_right}",
+      "template": "::${title}:: ${statement} {${T_or_F}#${feedback_wrong}#${feedback_right}}",
       "parameters": {
         "statement": "Text of the claim.",
         "correct_value": "T | F (TRUE | FALSE)",
-        "feedback_wrong": "Shown when learner is incorrect.",
-        "feedback_right": "Shown when learner is correct (optional but helpful)"
+        "feedback_wrong": "First #string inside braces – shown when learner is incorrect.  REQUIRED.",
+        "feedback_right": "Second #string inside braces – shown when learner is correct.  OPTIONAL but recommended."
       }
     },
 
