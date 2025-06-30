@@ -201,16 +201,25 @@
     },
 
     "numerical": {
-      "description": "Learner enters a number within tolerance or range.",
+      "description": "Numeric response with tolerance or range.",
       "feature_tags": [ "numeric_value", "formula_or_equation", "graph_or_table" ],
-      "template": "::${title}:: ${question_text} {#${answer}:${tolerance}}",
+      "template_simple": "::${title}:: ${question_text} {#${answer}:${tolerance}}",
+      "template_with_feedback": "::${title}:: ${question_text} {
+#
+=${answer}:${tolerance} #${feedback}
+}",
+      "format_rules": [
+        "**No feedback is allowed** on the one‑line simple form {#value:tolerance}. If you need feedback, switch to the multi‑line variant shown in `template_with_feedback`.",
+        "In the multi‑line variant, every answer line must start with `=` and carry exactly one #feedback delimiter.",
+        "Do not leave blank lines inside the { … } block except the optional first line immediately after the opening # (as shown).",
+        "Close with } on its own line right after the last answer line."
+      ],
       "parameters": {
         "answer": "Central numeric value OR min..max span",
         "tolerance": "Accepted ± range (e.g., 0.5)",
-        "partial_credit_ranges": "Optional =%n%value:tolerance bands",
-        "feedback_each_range": "#comment after each range (escape internal # as \#)"
+        "feedback": "Optional feedback when using the multi‑line variant (escape internal # as \#)"
       }
-    },
+    }
 
     "essay": {
       "description": "Open response to be graded manually.",
