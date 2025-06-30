@@ -21,9 +21,9 @@
 
   "meta": {
     "encoding": "UTF‑8",                      // Always save files in UTF‑8
-    "blank_line_between_questions": true,     // One blank line after every }
+    "blank_line_between_questions": true,     // One blank line AFTER every complete question. No blank lines INSIDE the answer braces.
     "title_required": true,                   // Every question needs ::Title::
-    "teacher_comment_required": true,         // Every ~wrong answer and wrong branch of T/F needs #feedback
+    "teacher_comment_required": true,         // Every ~wrong answer AND every wrong branch of T/F needs #feedback. For clarity, we strongly recommend feedback for correct answers too.
     "escape_rule": "Prefix ~ = # { } : with a backslash (\) when they appear as literals. Inside feedback text, any literal # must also be escaped (use \#) so Moodle doesn't treat it as a new feedback marker."
   },
 
@@ -114,12 +114,14 @@
       "description": "Binary proposition (T/F).",
       "feature_tags": [ "binary_statement", "cause_effect", "conditional_statement" ],
       "template": "::${title}:: ${statement} {${T_or_F}#${feedback_wrong}#${feedback_right}}",
+      "notes": "Place both feedback strings on the SAME line as the T/F letter (no line breaks inside the braces). Moodle ignores text after the first unescaped #.",
       "parameters": {
         "statement": "Text of the claim.",
         "correct_value": "T | F (TRUE | FALSE)",
-        "feedback_wrong": "Feedback when learner is incorrect. Must not include unescaped #.",
-        "feedback_right": "Feedback when learner is correct (optional). Must not include unescaped #."
+        "feedback_wrong": "Required. Shown when learner selects the wrong value. Must not include unescaped #.",
+        "feedback_right": "Optional but encouraged. Shown when learner selects the correct value. Must not include unescaped #."
       }
+    }
     },
 
     "short_answer": {
@@ -149,11 +151,11 @@
     "missing_word": {
       "description": "Embedded answers inside a sentence (gap‑fill).",
       "feature_tags": [ "quote", "concept_definition", "numeric_value", "named_entity" ],
-      "template": "::${title}:: ${sentence_with_{~distractor =correct}...}",
+      "template": "::${title}:: ${sentence_with_{~${wrong1} #${fb_w1} ~${wrong2} #${fb_w2} =${correct} #${fb_correct}}}",
       "parameters": {
         "sentence": "Sentence containing inline answer set.",
-        "answers_per_gap": "≥2 choices: one =correct, ≥1 ~wrong",
-        "feedback": "Inline #feedback for each option. Escape internal # as \#"
+        "answers_per_gap": "At least one =correct (with feedback) and ≥1 ~wrong (each WITH feedback).",
+        "feedback": "Every option—wrong OR correct—must carry exactly one #feedback segment. Escape internal # as \#."
       }
     },
 
