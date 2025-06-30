@@ -235,15 +235,20 @@
     }
 
     "essay": {
-      "description": "Open response to be graded manually.",
+      "description": "Open response to be graded manually (no automatic grading).",
       "feature_tags": [ "interpretation_required", "cause_effect", "comparison", "analysis" ],
       "template": "::${title}:: ${prompt} {}",
+      "format_rules": [
+        "The curly‑brace pair `{}` must appear on the SAME line as the prompt (no line breaks between ? and {}).",
+        "Place the closing `}` at the very end of that line followed by **one newline**.",
+        "Insert exactly one blank line AFTER `}` to delimit the next question (per meta rule)."
+      ],
       "parameters": {
         "prompt": "Question or writing task.",
         "grader_info": "Directions for human grader (optional)",
         "expected_word_count": "Suggested range (optional)"
       }
-    },
+    }
 
     "description": {
       "description": "Non‑interactive informational text block.",
