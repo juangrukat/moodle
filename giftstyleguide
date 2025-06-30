@@ -1,3 +1,4 @@
+
 {
   //============================================================
   // Moodle GIFT Style Guide (v1.0 – July 2025)
@@ -10,13 +11,13 @@
     "blank_line_between_questions": true,
     "title_required": true,              // Each question must have ::Title::
     "teacher_comment_required": true,    // Every ~wrong answer needs #comment explaining why
-    "tags_per_question": 10,             // Exactly ten tags per question
+    "tags_per_question": 10,             // Exactly ten tags per question for quick LLM retrieval
     "escape_rule": "Use a backslash (\\) before ~ = # { } : when they appear as normal text."
   },
 
   //‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
-  // Unified Tag Taxonomy – choose **exactly 10** tags for every
-  // generated question to describe the information type tested.
+  // Unified Tag Taxonomy – assign **exactly 10** tags to every
+  // question, enabling the LLM to quickly determine if it suits a given ask or text.
   //‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
   "tags": [
     "fact_recall", "definition", "terminology", "concept_check", "historical_date",
