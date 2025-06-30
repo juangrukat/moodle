@@ -21,7 +21,7 @@
 
   "meta": {
     "encoding": "UTF‑8",                      // Always save files in UTF‑8
-    "blank_line_between_questions": true,     // One blank line AFTER every complete question. No blank lines inside the answer block; a single newline just before the closing brace `}` is fine.
+    "blank_line_between_questions": true,     // Insert exactly one blank line AFTER each question's closing }. Absolutely **no empty lines** are allowed inside an answer block.
     "title_required": true,                   // Every question needs ::Title::
     "teacher_comment_required": true,         // Every ~wrong answer AND every wrong branch of T/F needs #feedback. For clarity, we strongly recommend feedback for correct answers too.
     "escape_rule": "Prefix ~ = # { } : with a backslash (\) when they appear as literals. Inside feedback text, any literal # must also be escaped (use \#) so Moodle doesn't treat it as a new feedback marker."
@@ -85,8 +85,8 @@
 }",
       "format_rules": [
         "Each answer line MUST start with = or ~ (optionally preceded by one space).",
-        "No blank lines are allowed inside the answer block.",
-        "Each answer line is single‑line only—avoid wrapping the answer text onto a second line.",
+        "No completely empty lines are allowed anywhere between { and }.",
+        "Each answer + feedback must live on a single physical line—avoid automatic wrapping.",
         "Close the block with a solitary } on its own line immediately after the final answer line."
       ],
       "parameters": {
@@ -118,7 +118,7 @@
         "Every answer line starts with ~ or =%xx% (no preceding blank lines).",
         "Keep each answer on one physical line; wrap manually with 
  if absolutely necessary.",
-        "Terminate the block with a single } on its own line without preceding blanks."
+        "Terminate the block with a single } on its own line—no blank line before it."
       ],
       "parameters": {
         "answers[]": {
@@ -139,8 +139,8 @@
         "Use *one* of T or F — whichever is correct. Do **NOT** list both.",
         "Immediately after the letter, add wrong‑answer feedback beginning with #.",
         "Optionally add a second #segment for correct‑answer feedback.",
-        "Keep the letter and both feedbacks on the SAME physical line (no line wrap).",
-        "A single newline just before the closing } is allowed; nothing else inside the braces."
+        "KEEP EVERYTHING on one physical line (the letter plus its feedback strings).",
+        "Put the closing } on its own line immediately after the feedback—no blank spacer above it."
       ],
       "parameters": {
         "statement": "Text of the claim.",
@@ -174,7 +174,7 @@
 }",
       "format_rules": [
         "Each pair line starts with = and stays on one line.",
-        "No blank lines inside; close with } on its own line."
+        "No blank lines inside; close with } immediately on the next line."
       ],
       "parameters": {
         "pairs[]": { "left": "String", "right": "String" },
