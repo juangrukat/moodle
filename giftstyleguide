@@ -23,8 +23,8 @@
     "encoding": "UTF‑8",                      // Always save files in UTF‑8
     "blank_line_between_questions": true,     // One blank line after every }
     "title_required": true,                   // Every question needs ::Title::
-    "teacher_comment_required": true,         // All wrong options (~) and the wrong‑answer branch of T/F must carry #feedback
-    "escape_rule": "Prefix ~ = # { } : with a backslash (\\) when they appear as literals."
+    "teacher_comment_required": true,         // Every ~wrong answer and wrong branch of T/F needs #feedback
+    "escape_rule": "Prefix ~ = # { } : with a backslash (\) when they appear as literals. Inside feedback text, any literal # must also be escaped (use \#) so Moodle doesn't treat it as a new feedback marker."
   },
 
   //------------------------------------------------------------
@@ -85,7 +85,7 @@
           "text": "Answer text",
           "is_correct": "true | false (only one true)",
           "weight": "Optional %n% for partial credit (rare)",
-          "feedback": "Teacher explanation (required for wrong answers)"
+          "feedback": "Teacher explanation (required for wrong answers). **Do not include an unescaped # inside**; use \# if # is needed inside the feedback text."
         },
         "shuffle": "true | false – let Moodle randomise order",
         "default_grade": "Numeric points for full credit"
@@ -103,7 +103,7 @@
         "answers[]": {
           "text": "Answer text",
           "weight": "Positive or negative % weight",
-          "feedback": "Teacher explanation"
+          "feedback": "Teacher explanation. Escape internal # as \#"
         },
         "total_positive_weight": "Sum of all positive weights ≤100",
         "min_negative_weight": "Use at least ‑50% to deter select‑all"
@@ -117,8 +117,8 @@
       "parameters": {
         "statement": "Text of the claim.",
         "correct_value": "T | F (TRUE | FALSE)",
-        "feedback_wrong": "First #string inside braces – shown when learner is incorrect.  REQUIRED.",
-        "feedback_right": "Second #string inside braces – shown when learner is correct.  OPTIONAL but recommended."
+        "feedback_wrong": "Feedback when learner is incorrect. Must not include unescaped #.",
+        "feedback_right": "Feedback when learner is correct (optional). Must not include unescaped #."
       }
     },
 
@@ -153,7 +153,7 @@
       "parameters": {
         "sentence": "Sentence containing inline answer set.",
         "answers_per_gap": "≥2 choices: one =correct, ≥1 ~wrong",
-        "feedback": "Inline #feedback for each option"
+        "feedback": "Inline #feedback for each option. Escape internal # as \#"
       }
     },
 
@@ -165,7 +165,7 @@
         "answer": "Central numeric value OR min..max span",
         "tolerance": "Accepted ± range (e.g., 0.5)",
         "partial_credit_ranges": "Optional =%n%value:tolerance bands",
-        "feedback_each_range": "#comment after each range"
+        "feedback_each_range": "#comment after each range (escape internal # as \#)"
       }
     },
 
