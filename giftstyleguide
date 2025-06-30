@@ -21,7 +21,7 @@
 
   "meta": {
     "encoding": "UTF‑8",                      // Always save files in UTF‑8
-    "blank_line_between_questions": true,     // One blank line AFTER every complete question. No blank lines INSIDE the answer braces.
+    "blank_line_between_questions": true,     // One blank line AFTER every complete question. No blank lines inside the answer block; a single newline just before the closing brace `}` is fine.
     "title_required": true,                   // Every question needs ::Title::
     "teacher_comment_required": true,         // Every ~wrong answer AND every wrong branch of T/F needs #feedback. For clarity, we strongly recommend feedback for correct answers too.
     "escape_rule": "Prefix ~ = # { } : with a backslash (\) when they appear as literals. Inside feedback text, any literal # must also be escaped (use \#) so Moodle doesn't treat it as a new feedback marker."
@@ -114,7 +114,7 @@
       "description": "Binary proposition (T/F).",
       "feature_tags": [ "binary_statement", "cause_effect", "conditional_statement" ],
       "template": "::${title}:: ${statement} {${T_or_F}#${feedback_wrong}#${feedback_right}}",
-      "notes": "Place both feedback strings on the SAME line as the T/F letter (no line breaks inside the braces). Moodle ignores text after the first unescaped #.",
+      "notes": "Keep feedback on the same line as the T/F letter; optionally insert one newline before the final `}`.",
       "parameters": {
         "statement": "Text of the claim.",
         "correct_value": "T | F (TRUE | FALSE)",
@@ -151,9 +151,10 @@
     "missing_word": {
       "description": "Embedded answers inside a sentence (gap‑fill).",
       "feature_tags": [ "quote", "concept_definition", "numeric_value", "named_entity" ],
-      "template": "::${title}:: ${sentence_with_{~${wrong1} #${fb_w1} ~${wrong2} #${fb_w2} =${correct} #${fb_correct}}}",
+      "template": "::${title}:: ${sentence_with_gap}",
+      "example": "Don Quixote and Sancho Panza started their {~work #Not work. ~job #Wrong. =adventure #Correct!}.",
       "parameters": {
-        "sentence": "Sentence containing inline answer set.",
+        "sentence_with_gap": "Sentence that already contains the brace‑enclosed answer set.",
         "answers_per_gap": "At least one =correct (with feedback) and ≥1 ~wrong (each WITH feedback).",
         "feedback": "Every option—wrong OR correct—must carry exactly one #feedback segment. Escape internal # as \#."
       }
