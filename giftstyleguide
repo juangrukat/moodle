@@ -132,17 +132,22 @@
     }
 
     "true_false": {
-      "description": "Binary proposition (T/F).",
+      "description": "Binary proposition (T/F). Exactly ONE letter (the correct value) must appear inside the braces.",
       "feature_tags": [ "binary_statement", "cause_effect", "conditional_statement" ],
       "template": "::${title}:: ${statement} {${T_or_F}#${feedback_wrong}#${feedback_right}}",
-      "notes": "Keep feedback on the same line as the T/F letter; optionally insert one newline before the final `}`.",
+      "format_rules": [
+        "Use *one* of T or F — whichever is correct. Do **NOT** list both.",
+        "Immediately after the letter, add wrong‑answer feedback beginning with #.",
+        "Optionally add a second #segment for correct‑answer feedback.",
+        "Keep the letter and both feedbacks on the SAME physical line (no line wrap).",
+        "A single newline just before the closing } is allowed; nothing else inside the braces."
+      ],
       "parameters": {
         "statement": "Text of the claim.",
         "correct_value": "T | F (TRUE | FALSE)",
-        "feedback_wrong": "Required. Shown when learner selects the wrong value. Must not include unescaped #.",
-        "feedback_right": "Optional but encouraged. Shown when learner selects the correct value. Must not include unescaped #."
+        "feedback_wrong": "Required. Shown when learner selects the wrong value. Must not contain unescaped # or line‑breaks.",
+        "feedback_right": "Optional but encouraged. Shown when learner selects the correct value. Must not contain unescaped # or line‑breaks."
       }
-    }
     },
 
     "short_answer": {
