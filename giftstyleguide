@@ -108,14 +108,28 @@
         "stepwise_process", "ranking_order", "exception_rule"
       ],
       "template": "::${title}:: ${question_text} {
-~%${neg_weight}%${distractor} #${feedback_d}
-~%${pos_weight}%${correct_part} #${feedback_c}
+~%${weight_1}%${answer_1} #${feedback_1}
+~%${weight_2}%${answer_2} #${feedback_2}
 ...
 }",
       "format_rules": [
-        $1,
-        "Each answer line must contain **exactly one** #feedback delimiter. If a # is needed inside feedback text, escape it as \#."
+        "Begin each answer line with a single `~` (never `=`) followed **immediately** by the optional `%weight%` block.",
+        "Do **not** place a second `~` or `=` after the `%weight%`; the answer text starts right away, e.g., `~%50%This is the text`.",
+        "Weights may be positive or negative, but the sum of positive weights should not exceed 100%.",
+        "Each answer line must contain **exactly one** `#` feedback delimiter. Escape literal # inside feedback as `\#`.",
+        "Keep each answer+feedback on one physical line; no blank lines inside the block.",
+        "Terminate the block with a single `}` on its own line (no blank line before it)."
       ],
+      "parameters": {
+        "answers[]": {
+          "text": "Answer text (single line, must not start with ~ or =).",
+          "weight": "Positive or negative integer between ‑100 and 100 (percent).",
+          "feedback": "Teacher explanation. Escape internal # as \#"
+        },
+        "total_positive_weight": "Sum of all positive weights ≤100",
+        "min_negative_weight": "Use at least ‑50% to deter select‑all"
+      }
+    },
       "parameters": {
         "answers[]": {
           "text": "Answer text (single line).",
