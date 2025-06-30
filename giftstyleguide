@@ -212,11 +212,11 @@
       "template_value_tol": "::${title}:: ${question_text} {#${value}:${tolerance}}",
       "template_range": "::${title}:: ${question_text} {#${min}..${max}}",
       "template_value_tol_fb": "::${title}:: ${question_text} {
-=#${value}:${tolerance} #${feedback}
-}",
+=${value}:${tolerance} #${feedback}
+}",,
       "format_rules": [
         "Choose **exactly one** style: (a) central value + :tolerance **or** (b) min..max span — never both together.",
-        "If you include feedback, switch to the multi‑line variant and prefix each answer with `=`.",
+        "If you include feedback, switch to the multi‑line variant and prefix each answer with `=` (no leading #).",
         "No blank lines inside the block; close with } immediately after the last answer line."
       ],
       "parameters": {
