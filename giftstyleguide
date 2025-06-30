@@ -132,9 +132,19 @@
       "feature_tags": [ "binary_statement", "cause_effect", "conditional_statement" ],
       "template": "::${title}:: ${statement} {${T_or_F}#${feedback_wrong}#${feedback_right}}",
       "format_rules": [
-        $1,
-        "Each answer line must contain **exactly one** #feedback delimiter. If a # is needed inside feedback text, escape it as \#."
+        "Use *one* of T or F — whichever is correct. Absolutely **no** additional ~T, ~F, or other answers are permitted.",
+        "Immediately after the letter, add wrong‑answer feedback beginning with #.",
+        "Optionally add a second #segment for correct‑answer feedback (max two # segments in total).",
+        "KEEP EVERYTHING on one physical line (the letter plus its feedback strings). No line breaks until after the closing brace.",
+        "Close the block with } on the very next line — no blank spacer above it."
       ],
+      "parameters": {
+        "statement": "Text of the claim.",
+        "correct_value": "T | F (TRUE | FALSE)",
+        "feedback_wrong": "Required. Shown when learner selects the wrong value. Must not contain unescaped # or line‑breaks.",
+        "feedback_right": "Optional but encouraged. Shown when learner selects the correct value. Must not contain unescaped # or line‑breaks."
+      }
+    },
       "parameters": {
         "statement": "Text of the claim.",
         "correct_value": "T | F (TRUE | FALSE)",
