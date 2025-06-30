@@ -77,15 +77,26 @@
         "named_entity", "numeric_value", "concept_definition",
         "list_items", "example_sentence", "cause_effect"
       ],
-      "template": "::${title}:: ${question_text} {\n =${correct_answer} #${correct_feedback}\n ~${wrong_answer_1} #${feedback_1}\n ~${wrong_answer_2} #${feedback_2}\n ...\n}",
+      "template": "::${title}:: ${question_text} {
+=${correct_answer} #${correct_feedback}
+~${wrong_answer_1} #${feedback_1}
+~${wrong_answer_2} #${feedback_2}
+...
+}",
+      "format_rules": [
+        "Each answer line MUST start with = or ~ (optionally preceded by one space).",
+        "No blank lines are allowed inside the answer block.",
+        "Each answer line is single‑line only—avoid wrapping the answer text onto a second line.",
+        "Close the block with a solitary } on its own line immediately after the final answer line."
+      ],
       "parameters": {
         "title": "3‑12 word summary of the ask.",
         "question_text": "Prompt. May start with [html]|[markdown]|[plain]|[moodle].",
         "answers[]": {
-          "text": "Answer text",
+          "text": "Answer text (single line).",
           "is_correct": "true | false (only one true)",
           "weight": "Optional %n% for partial credit (rare)",
-          "feedback": "Teacher explanation (required for wrong answers). **Do not include an unescaped # inside**; use \# if # is needed inside the feedback text."
+          "feedback": "Teacher explanation (required for wrong answers). Do NOT include a line‑break or unescaped # inside; use \# if # is needed."
         },
         "shuffle": "true | false – let Moodle randomise order",
         "default_grade": "Numeric points for full credit"
@@ -98,17 +109,27 @@
         "list_items", "comparison", "classification",
         "stepwise_process", "ranking_order", "exception_rule"
       ],
-      "template": "::${title}:: ${question_text} {\n ~%${neg_weight}%${distractor} #${feedback_d}\n ~%${pos_weight}%${correct_part} #${feedback_c}\n ...\n}",
+      "template": "::${title}:: ${question_text} {
+~%${neg_weight}%${distractor} #${feedback_d}
+~%${pos_weight}%${correct_part} #${feedback_c}
+...
+}",
+      "format_rules": [
+        "Every answer line starts with ~ or =%xx% (no preceding blank lines).",
+        "Keep each answer on one physical line; wrap manually with 
+ if absolutely necessary.",
+        "Terminate the block with a single } on its own line without preceding blanks."
+      ],
       "parameters": {
         "answers[]": {
-          "text": "Answer text",
+          "text": "Answer text (single line).",
           "weight": "Positive or negative % weight",
           "feedback": "Teacher explanation. Escape internal # as \#"
         },
         "total_positive_weight": "Sum of all positive weights ≤100",
         "min_negative_weight": "Use at least ‑50% to deter select‑all"
       }
-    },
+    }
 
     "true_false": {
       "description": "Binary proposition (T/F).",
@@ -141,9 +162,20 @@
     "matching": {
       "description": "Learner pairs items from two columns.",
       "feature_tags": [ "paired_items", "classification", "process_output" ],
-      "template": "::${title}:: ${question_text} {\n =${left_1} -> ${right_1}\n =${left_2} -> ${right_2}\n =${left_3} -> ${right_3}\n}",
+      "template": "::${title}:: ${question_text} {
+=${left_1} -> ${right_1}
+=${left_2} -> ${right_2}
+=${left_3} -> ${right_3}
+}",
+      "format_rules": [
+        "Each pair line starts with = and stays on one line.",
+        "No blank lines inside; close with } on its own line."
+      ],
       "parameters": {
         "pairs[]": { "left": "String", "right": "String" },
+        "min_pairs": 3
+      }
+    }pairs[]": { "left": "String", "right": "String" },
         "min_pairs": 3
       }
     },
