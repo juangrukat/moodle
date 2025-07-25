@@ -1,0 +1,283 @@
+{
+  //============================================================
+  // Moodle GIFT Style Guide (v3.0 – July 2025)
+  // Purpose
+  // --------
+  // 1. Provide an LLM with rock-solid rules & templates for
+  //    writing Moodle-compliant GIFT questions.
+  // 2. Supply a **feature-tag vocabulary** that lets the LLM
+  //    map what it sees in a source passage → the most
+  //    appropriate question TYPE to generate.
+  // 3. Incorporate ultra-rigid, repetitive error-prevention rules
+  //    to minimize LLM formatting mistakes, based on proven
+  //    techniques for handling common pitfalls like unbalanced
+  //    braces, incorrect prefixes, unescaped characters, and
+  //    syntax deviations.
+  //
+  // Workflow:
+  //   ◦ Analyze the passage and assign one or more *text_feature_tags*.
+  //   ◦ For each feature, look up question types with overlapping `feature_tags`.
+  //   ◦ Pick best-fit templates and fill PARAMETERS.
+  //   ◦ Generate the desired number of questions (e.g., 20).
+  //   ◦ Strictly follow all meta rules, format_rules, and error-prevention guidelines.
+  //   ◦ Output ONLY the GIFT-formatted text; no explanations, introductions, or extra content.
+  //============================================================
+
+  "meta": {
+    "encoding": "UTF-8",                      // Always save files in UTF-8. Ensure no non-UTF-8 characters.
+    "blank_line_between_questions": true,     // Insert exactly one blank line AFTER each question's closing }. Absolutely **NO empty lines** inside a question block, answer block, or anywhere within a single question.
+    "title_required": true,                   // Every question MUST start with ::Title:: (short, unique, 3-12 words, no special characters like ~ = # { } : unescaped).
+    "teacher_comment_required": true,         // Every ~wrong answer AND every wrong branch of T/F MUST have #feedback. Strongly recommend feedback for correct answers too. Feedback MUST be educational and accurate.
+    "escape_rule": "Prefix ~ = # { } : with a backslash (\) when they appear as literals in question text, answers, or feedback. Inside feedback text, use \# for literal hash; **there must be only one unescaped # per answer line**, dividing answer from feedback. Do NOT escape in titles. Always escape in LaTeX, code, or if special chars could break parsing.",
+    "global_feedback": "####global feedback text", // Optional: Add after closing } on its own line, starting with ####. Use for question-wide explanations.
+    "categories": "$CATEGORY: path/to/category", // Optional: Add on own line before questions, e.g., $CATEGORY: Science/Biology. Use for organizing in Moodle.
+    "text_formatting": "[html]|[markdown]|[plain]|[moodle]", // Optional: Prefix question text with one of these for formatting. Use [markdown] for bold/italics if needed.
+    "general_rules": [
+      "Output ONLY GIFT-formatted text. NO introductions, NO explanations, NO extra lines or comments (unless using // for ignored notes).",
+      "Each question MUST end with balanced { } if answers required; NO extra braces.",
+      "NO spaces around =, ~, or # in answers (e.g., =correct#feedback, not = correct # feedback).",
+      "Ensure UTF-8 encoding; NO trailing spaces or characters on lines.",
+      "File MUST end with ONE blank line after last question.",
+      "Common pitfalls to AVOID (repeat: AVOID these):",
+      "- Do NOT omit or add extra braces { }.",
+      "- Do NOT use spaces like = correct or ~ wrong.",
+      "- Do NOT add blank lines INSIDE a question or answer block.",
+      "- Do NOT forget to escape special characters (~ = # { } :).",
+      "- Do NOT add comments (//) unless for internal notes (ignored on import).",
+      "- For all types: Add feedback to EVERY answer for educational value.",
+      "- Variety: Generate a mix of types based on content; prefer multiple-choice for reliability.",
+      "- Accuracy: Questions MUST be based exactly on provided content; NO hallucinations or invented facts."
+    ],
+    "output_instructions": "From the provided content: [INSERT YOUR DOCUMENTATION HERE]. Generate exactly [NUMBER] questions: e.g., [3 multiple-choice, 2 short-answer, 1 true-false, 1 numerical]. Use tags to select types. Output ONLY in this skeleton format (adapt for types):\n::Question1Title:: Question text {=correct #feedback ~wrong1 #feedback ~wrong2 #feedback ~wrong3 #feedback}\n\n::Question2Title:: etc."
+  },
+
+  //------------------------------------------------------------
+  // Text-Feature Tag Taxonomy
+  // -------------------------
+  // 20 tags describing salient structures/facts in passages.
+  // Attached to question types for smart mapping.
+  //------------------------------------------------------------
+  "text_feature_tags": [
+    "numeric_value",      // explicit numbers, units, quantitative data
+    "binary_statement",   // claims that are either true or false
+    "named_entity",       // proper names: people, places, titles, terms
+    "chronology",         // dates, timelines, ordered historical events
+    "list_items",         // bullet lists or comma-separated enumerations
+    "paired_items",       // A→B correspondences (term : definition)
+    "stepwise_process",   // ordered procedure or algorithm
+    "classification",     // category / sub-category relationships
+    "comparison",         // explicit similarities / differences
+    "cause_effect",       // stated causal relationships
+    "concept_definition", // sentence that defines or explains a term
+    "example_sentence",   // sentence gives example of concept in action
+    "quote",              // quotations that can be completed or attributed
+    "formula_or_equation",// math/chem expressions present in text
+    "graph_or_table",     // visual data referenced by the prose
+    "conditional_statement",// if … then … constructions
+    "interpretation_required",// inference beyond literal text
+    "process_output",     // mapping of input → output/result
+    "ranking_order",      // best → worst, largest → smallest, etc.
+    "exception_rule"      // rule plus its exceptions stated
+  ],
+
+  //------------------------------------------------------------
+  // Question Type Templates
+  // -----------------------
+  // Each has: description, feature_tags, template, format_rules (with repetitions for error-prevention), parameters.
+  // AVOID common errors: Double-check braces, escapes, no spaces around =/~/#, one blank line between questions.
+  //------------------------------------------------------------
+  "question_types": {
+
+    "multiple_choice_single": {
+      "description": "Exactly one correct answer (radio-button). At least 3 distractors.",
+      "feature_tags": [
+        "named_entity", "numeric_value", "concept_definition",
+        "list_items", "example_sentence", "cause_effect"
+      ],
+      "template": "::${title}:: ${question_text} {\n=${correct_answer} #${correct_feedback}\n~${wrong_answer_1} #${feedback_1}\n~${wrong_answer_2} #${feedback_2}\n...\n}",
+      "format_rules": [
+        "Each answer line: Exactly one #feedback. Escape # in feedback as \#.",
+        "NO spaces around = or ~ (e.g., =correct#feedback).",
+        "Exactly ONE =correct; others ~wrong.",
+        "NO blank lines inside {}; close } on own line.",
+        "AVOID: Extra braces, unescaped specials, spaces around =/~/#.",
+        "Repeat: NO spaces around =/~/#. Escape specials."
+      ],
+      "parameters": {
+        "title": "3-12 word summary.",
+        "question_text": "Prompt; optional [markdown] prefix.",
+        "answers[]": {
+          "text": "Single line text.",
+          "is_correct": "true | false (only one true)",
+          "weight": "Optional %n% for partial (rare)",
+          "feedback": "Required for wrongs; no line-breaks/unescaped #."
+        },
+        "shuffle": "true | false",
+        "default_grade": "Numeric points"
+      }
+    },
+
+    "multiple_choice_multiple": {
+      "description": "Checkboxes; partial credits possible.",
+      "feature_tags": [
+        "list_items", "comparison", "classification",
+        "stepwise_process", "ranking_order", "exception_rule"
+      ],
+      "template": "::${title}:: ${question_text} {\n~%${weight_1}%${answer_1} #${feedback_1}\n~%${weight_2}%${answer_2} #${feedback_2}\n...\n}",
+      "format_rules": [
+        "Start each with ~ immediately followed by %weight% (NO space).",
+        "Answer text right after %weight% (e.g., ~%50%Text#fb).",
+        "Weights: Positive/negative; positives sum ≤100%.",
+        "Exactly one # per line; escape \# in fb.",
+        "NO blank lines inside {}; } on own line.",
+        "AVOID: = instead of ~, spaces after ~ or %weight%, extra #.",
+        "Repeat: NO spaces around ~ or %. Sum weights correctly."
+      ],
+      "parameters": {
+        "answers[]": {
+          "text": "Single line, no leading ~/=.",
+          "weight": "-100 to 100 percent.",
+          "feedback": "Escape # as \#."
+        },
+        "total_positive_weight": "≤100",
+        "min_negative_weight": "At least -50% to deter guessing"
+      }
+    },
+
+    "true_false": {
+      "description": "Binary (T/F). Feedback order: wrong first, then correct.",
+      "feature_tags": [ "binary_statement", "cause_effect", "conditional_statement" ],
+      "template": "::${title}:: ${statement} {${correct_value} #${feedback_wrong} #${feedback_correct}}",
+      "format_rules": [
+        "Use T or F (or TRUE/FALSE); NO extra ~ lines.",
+        "Feedback: First # = for WRONG choice (explains why opposite is incorrect). Second # = for CORRECT (explains why right).",
+        "Order ALWAYS wrong fb first, then correct (e.g., if correct T: #false_fb #true_fb; if F: #true_fb #false_fb).",
+        "All on ONE physical line inside {}. NO spaces around T/F and #.",
+        "NO blank lines; close } immediately after.",
+        "AVOID: Reversed fb order (causes confusing display), duplicate fb, unescaped #, newlines inside {}.",
+        "Repeat: Wrong fb FIRST, then correct. Escape # as \# if needed in fb."
+      ],
+      "parameters": {
+        "statement": "Claim text.",
+        "correct_value": "T | F | TRUE | FALSE",
+        "feedback_wrong": "Required; for incorrect choice. No unescaped #/breaks.",
+        "feedback_correct": "Optional; for correct. No unescaped #/breaks."
+      }
+    },
+
+    "short_answer": {
+      "description": "Short text; synonyms/partials allowed.",
+      "feature_tags": [ "named_entity", "concept_definition", "quote" ],
+      "template": "::${title}:: ${question_text} {\n =${answer1} #${fb1}\n =${answer2} #${fb2}\n ...\n}",
+      "format_rules": [
+        "Each answer: =text #fb; optional %n% before text for partial.",
+        "NO spaces around = or #.",
+        "NO blank lines inside {}; } on own line.",
+        "AVOID: ~ for wrongs (short-answer has no distractors), unescaped specials.",
+        "Repeat: Use = for all accepts; escape specials."
+      ],
+      "parameters": {
+        "answers[]": {
+          "text": "Accepted variant.",
+          "weight": "Optional %n% partial.",
+          "feedback": "For variant."
+        },
+        "usecase": "0 (insensitive) | 1 (sensitive)"
+      }
+    },
+
+    "matching": {
+      "description": "Pair left-right items.",
+      "feature_tags": [ "paired_items", "classification", "process_output" ],
+      "template": "::${title}:: ${question_text} {\n=${left_1} -> ${right_1}\n=${left_2} -> ${right_2}\n=${left_3} -> ${right_3}\n}",
+      "format_rules": [
+        "NO feedback (#) or weights (%); pure =left -> right.",
+        "At least 3 pairs; NO blank lines inside {}.",
+        "AVOID: Adding #fb (not supported), spaces around = or ->.",
+        "Repeat: NO feedback/weights. Escape specials in text."
+      ],
+      "parameters": {
+        "pairs[]": { "left": "String", "right": "String" },
+        "min_pairs": 3
+      }
+    },
+
+    "missing_word": {
+      "description": "Gap-fill in sentence.",
+      "feature_tags": [ "quote", "concept_definition", "numeric_value", "named_entity" ],
+      "template": "::${title}:: ${sentence_with_gap}",
+      "example": "Text {~wrong #fb ~wrong2 #fb =correct #fb}.",
+      "format_rules": [
+        "Inline {} in sentence; =correct, ~wrongs inside.",
+        "Feedback # after EACH option (wrong/correct).",
+        "Exactly one # per option; escape \# in fb.",
+        "NO newlines inside {}; all one line.",
+        "AVOID: Multiple gaps (use separate questions), no fb.",
+        "Repeat: Fb for EVERY option; escape #."
+      ],
+      "parameters": {
+        "sentence_with_gap": "With {} embedded.",
+        "answers_per_gap": ">=1 =correct, >=1 ~wrong with fb."
+      }
+    },
+
+    "numerical": {
+      "description": "Numeric with tolerance/range. Use = for feedback/multiples.",
+      "feature_tags": [ "numeric_value", "formula_or_equation", "graph_or_table" ],
+      "template_simple": "::${title}:: ${question_text} {#${value}:${tolerance}}",
+      "template_range": "::${title}:: ${question_text} {#${min}..${max}}",
+      "template_with_fb": "::${title}:: ${question_text} {# =${value}:${tolerance} #${feedback}}",
+      "template_multi": "::${title}:: ${question_text} {\n# =${value1}:${tol1} #${fb1}\n =%${weight}%${value2}:${tol2} #${fb2}\n}",
+      "format_rules": [
+        "Start with {#; use =value:tol for correct/partials with fb.",
+        "Tolerance: :0 for exact (NO trailing . like :0.); decimal ok (:0.5).",
+        "Range: min..max (NO tolerance with it).",
+        "For fb: Use =value:tol #fb; multiline {} optional for multiples.",
+        "NO spaces around : or #; NO #fb in simple single-line without =.",
+        "AVOID: #fb without = (parse error), trailing . in tol, mixing tol/range.",
+        "Repeat: For fb, ALWAYS =value:tol #fb. NO trailing . in tol. Use multiline for clarity if multiples."
+      ],
+      "parameters": {
+        "value": "Central (tolerance form)",
+        "tolerance": "± range (e.g., 0, no .)",
+        "min": "Lower (range form)",
+        "max": "Upper (range form)",
+        "feedback": "Optional; escape # as \#",
+        "weight": "For partials %n%"
+      }
+    },
+
+    "essay": {
+      "description": "Open-ended, manual grading.",
+      "feature_tags": [ "interpretation_required", "cause_effect", "comparison" ],
+      "template": "::${title}:: ${prompt} {}",
+      "format_rules": [
+        "{} on SAME line as prompt; NO breaks between text and {}.",
+        "Closing } at line end, followed by one newline.",
+        "One blank line AFTER } for next question.",
+        "AVOID: Newlines before/inside {}, adding answers inside {}.",
+        "Repeat: {} on same line; no content inside."
+      ],
+      "parameters": {
+        "prompt": "Task.",
+        "grader_info": "Optional directions.",
+        "expected_word_count": "Optional range"
+      }
+    },
+
+    "description": {
+      "description": "Info block, no interaction.",
+      "feature_tags": [ "graph_or_table", "quote" ],
+      "template": "::${title}:: ${content}",
+      "format_rules": [
+        "NO {}; just title and content.",
+        "One blank line after for next.",
+        "AVOID: Adding {} or answers.",
+        "Repeat: No braces."
+      ],
+      "parameters": {
+        "content": "Text/info."
+      }
+    }
+  }
+}
